@@ -1,20 +1,57 @@
 package com.thedevguy.hackerrank;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
 public class CountTriplets {
 
-    public static int countTriplets(int[]a, int r){
-        int counter = 0;
-        for (int i = 1; i <a.length - 1; i++){
-            if(a[i] % r == a[i-1] && a[i] * r == a[i + 1]){
-                counter++;
-            }
+    private static long countTriplets(List<Long> arr, long r) {
+        Map<Long, Long> leftMap = new HashMap<>();
+        Map<Long, Long> rightMap = new HashMap<>();
+
+        for (long item : arr) {
+            rightMap.put(item, rightMap.getOrDefault(item, 0L) + 1);
         }
-        return counter;
+
+        long count = 0;
+
+        for (int i = 0; i < arr.size(); i++) {
+            long midTerm = arr.get(i);
+            long c1 = 0, c3 = 0;
+
+            rightMap.put(midTerm, rightMap.getOrDefault(midTerm, 0L) - 1);
+
+            if (leftMap.containsKey(midTerm / r) && midTerm % r == 0) {
+                c1 = leftMap.get(midTerm / r);
+            }
+
+            if (rightMap.containsKey(midTerm * r))
+                c3 = rightMap.get(midTerm * r);
+
+            count += c1 * c3;
+
+            leftMap.put(midTerm, leftMap.getOrDefault(midTerm, 0L) + 1);
+
+        }
+        return count;
     }
 
-    public static void main(String[] args) {
-        int[] arr = new int[]{1,4,16,64};
-        int r = 4;
-        System.out.println(countTriplets(arr,r));
+    public static void main(String[] args) throws IOException {
+        Scanner sc = new Scanner(System.in);
+        long n = sc.nextLong();
+        long r = sc.nextLong();
+        List<Long> arr = new ArrayList<>();
+        while (n-- > 0) {
+            arr.add(sc.nextLong());
+        }
+
+        long ans = countTriplets(arr, r);
+        System.out.println(ans);
+
+        sc.close();
     }
 }
